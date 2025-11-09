@@ -458,7 +458,7 @@
 
         async function cargarInventario() {
             try {
-                const res = await fetch("http://localhost:3000/inventario");
+                const res = await fetch("https://panaderialagloria.onrender.com/inventario");
                 inventarioPanes = await res.json();
             } catch (err) {
                 console.warn("No se pudo cargar el inventario, mostrando menú sin stock...");
@@ -613,7 +613,7 @@
             };
 
             try {
-                const response = await fetch("http://localhost:3000/ventas", {
+                const response = await fetch("https://panaderialagloria.onrender.com/ventas", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify(venta)
