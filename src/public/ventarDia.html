@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventas del Día y Corte</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff7ec;
+            color: #4a2c00;
+            padding: 20px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        .header-top {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+        }
+
+        .btn-regresar {
+            display: inline-block;
+            background: #f5b400;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        button {
+            padding: 6px 10px;
+            margin-top: 10px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #21867a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4a261;
+            color: white;
+        }
+
+        #corte,
+        #corte-bolillo {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+            background-color: #fef9f0;
+        }
+
+        input[type="number"] {
+            width: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-top">
+        <a href="../index.html" class="btn-regresar">← Menú Principal</a>
+    </div>
+
+    <h1>Ventas del Día</h1>
+
+    <label for="fecha">Selecciona fecha:</label>
+    <input type="date" id="fecha">
+    <button id="btnBuscar">Buscar Ventas</button>
+
+    <table id="tabla-ventas">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Pago</th>
+                <th>Cambio</th>
+                <th>Método de Pago</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <!-- 🧾 Registro de gastos del día -->
+    <section id="gastos">
+        <h3>💸 Gastos del día (Piedra)</h3>
+        <div id="formGasto">
+            <input type="text" id="nombreGasto" placeholder="¿Qué fue?" required>
+            <input type="number" id="montoGasto" placeholder="Total $" required>
+            <input type="text" id="explicacionGasto" placeholder="Explicación del porqué" required>
+            <button id="agregarGasto">➕ Agregar gasto</button>
+        </div>
+
+        <table border="1" id="tablaGastos">
+            <thead>
+                <tr>
+                    <th>Qué fue</th>
+                    <th>Total</th>
+                    <th>Explicación</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </section>
+
+
+    <button id="btnCorteDia" style="display:none;">Hacer Corte de Día</button>
+
+    <!-- Corte Principal -->
+    <section id="corte"
+        style="display:none; margin-top: 20px; border: 1px solid #ccc; padding: 10px; border-radius: 8px;">
+        <h3>💰 Corte del día</h3>
+        <h2>Corte Principal (sin Bolillo y Bolsa)</h2>
+        <p><strong>Total de ventas:</strong> $<span id="totalDia">0.00</span></p>
+        <p><strong>Total de gastos:</strong> $<span id="totalGastos">0.00</span></p>
+        <p style="color:green;"><strong>Total neto después de gastos:</strong> $<span id="totalNeto">0.00</span></p>
+
+        <div>
+            <label for="billetesPrincipal">Dinero en billete entregado:</label>
+            <input type="number" id="billetesPrincipal" min="0" step="0.01">
+        </div>
+        <div>
+            <label for="monedasPrincipal">Dinero en moneda entregado:</label>
+            <input type="number" id="monedasPrincipal" min="0" step="0.01">
+        </div>
+
+    </section>
+
+    <!-- Corte de Bolillo y Bolsa -->
+    <section id="corte-bolillo" style="display:none; margin-top:40px;">
+        <h2>Corte Bolillo y Bolsa</h2>
+
+        <table id="tabla-bolillo-bolsa" border="1" style="width:100%; border-collapse:collapse; text-align:center;">
+            <thead>
+                <tr style="background:#f7d7a3;">
+                    <th>Hora</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Total ($)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <div style="margin-top:20px;">
+            <p>Total venta Bolillo: <span id="totalBolillo">$0.00</span></p>
+            <p>Total venta Bolsa: <span id="totalBolsa">$0.00</span></p>
+            <p>Total general Bolillo + Bolsa: <span id="totalBolilloBolsa">$0.00</span></p>
+        </div>
+
+        <div style="margin-top:15px;">
+            <h3>💵 Dinero entregado (Bolillo y Bolsa)</h3>
+            <label>Dinero en billetes:</label>
+            <input type="number" id="billetesBolillo" placeholder="0.00" step="0.01"><br><br>
+            <label>Dinero en monedas:</label>
+            <input type="number" id="monedasBolillo" placeholder="0.00" step="0.01">
+        </div>
+    </section>
+
+    <script>
+        let ventasDia = [];
+
+        document.getElementById("btnBuscar").addEventListener("click", async () => {
+            const fechaSeleccionada = document.getElementById("fecha").value;
+            if (!fechaSeleccionada) {
+                alert("Selecciona una fecha");
+                return;
+            }
+
+            // Crear rango (manteniendo hora local)
+            const fechaInicio = new Date(fechaSeleccionada + "T00:00:00");
+            const fechaFin = new Date(fechaSeleccionada + "T23:59:59");
+
+            // Convertir a UTC string sin desfase
+            const inicioStr = fechaInicio.toISOString().slice(0, 19);
+            const finStr = fechaFin.toISOString().slice(0, 19);
+
+            console.log("🔹 Buscando entre:", inicioStr, "y", finStr);
+
+            const response = await fetch(
+                `http://localhost:3000/ventas?inicio=${inicioStr}&fin=${finStr}`
+            );
+
+
+            const ventas = await response.json();
+            ventasDia = ventas;
+
+            const tbody = document.querySelector("#tabla-ventas tbody");
+            tbody.innerHTML = "";
+
+            if (ventas.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='6'>No se encontraron ventas</td></tr>";
+                document.getElementById("btnCorteDia").style.display = "none";
+                return;
+            }
+
+            ventas.forEach(venta => {
+                const hora = new Date(venta.fecha).toLocaleTimeString('es-MX', {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    hour12: true,
+                    timeZone: 'America/Mexico_City' // 👈 fuerza hora de México
+                });
+                const productos = venta.productos.map(p => `${p.nombre} x${p.cantidad}`).join(", ");
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                    <td>${hora}</td>
+                    <td>${productos}</td>
+                    <td>$${venta.total.toFixed(2)}</td>
+                    <td>$${venta.pago.toFixed(2)}</td>
+                    <td>$${venta.cambio.toFixed(2)}</td>
+                    <td>${venta.metodoPago}</td>
+                `;
+                tbody.appendChild(tr);
+                console.log(typeof venta.fecha, venta.fecha);
+            });
+
+            document.getElementById("btnCorteDia").style.display = "inline-block";
+        });
+
+        let gastosDia = [];
+
+        document.getElementById("agregarGasto").addEventListener("click", () => {
+            const nombre = document.getElementById("nombreGasto").value.trim().toLowerCase();
+            const monto = parseFloat(document.getElementById("montoGasto").value);
+            const explicacion = document.getElementById("explicacionGasto").value.trim();
+
+            if (!nombre || isNaN(monto) || !explicacion) {
+                alert("Completa todos los campos del gasto");
+                return;
+            }
+
+            gastosDia.push({ nombre, monto, explicacion });
+
+            const tbody = document.querySelector("#tablaGastos tbody");
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+    <td>${nombre}</td>
+    <td>$${monto.toFixed(2)}</td>
+    <td>${explicacion}</td>
+  `;
+            tbody.appendChild(tr);
+
+            // Limpiar inputs
+            document.getElementById("nombreGasto").value = "";
+            document.getElementById("montoGasto").value = "";
+            document.getElementById("explicacionGasto").value = "";
+        });
+
+        // Hacer corte del día
+        document.getElementById("btnCorteDia").addEventListener("click", () => {
+            if (ventasDia.length === 0) return;
+
+            let totalDia = 0;
+            let bolilloCantidad = 0, bolsaCantidad = 0;
+            let totalBolillo = 0, totalBolsa = 0;
+
+            // 🔹 Calcular totales de ventas
+            ventasDia.forEach(venta => {
+                venta.productos.forEach(p => {
+                    const nombre = p.nombre.toLowerCase();
+                    if (nombre === "bolillo") {
+                        bolilloCantidad += p.cantidad;
+                        totalBolillo += p.subtotal;
+                    } else if (nombre === "bolsa") {
+                        bolsaCantidad += p.cantidad;
+                        totalBolsa += p.subtotal;
+                    } else {
+                        totalDia += p.subtotal;
+                    }
+                });
+            });
+
+            // 🔹 Calcular gastos (piedra)
+            let totalGastos = 0, gastosBolillo = 0, gastosBolsa = 0;
+            gastosDia.forEach(g => {
+                const n = g.nombre.toLowerCase();
+                if (n === "bolillo") gastosBolillo += g.monto;
+                else if (n === "bolsa") gastosBolsa += g.monto;
+                else totalGastos += g.monto;
+            });
+
+            // 🔹 Restar los gastos correspondientes
+            const totalGastosBolilloBolsa = gastosBolillo + gastosBolsa;
+            const totalNetoBolilloBolsa = (totalBolillo + totalBolsa) - totalGastosBolilloBolsa;
+
+            totalDia -= totalGastos;
+            const totalGeneralBolilloBolsa = totalBolillo + totalBolsa;
+            const totalFinalDia = totalDia + totalNetoBolilloBolsa;
+
+            // 🔹 Mostrar corte principal
+            const cortePrincipal = document.getElementById("corte");
+            cortePrincipal.style.display = "block";
+            cortePrincipal.innerHTML = `
+        <h3>💰 Corte Principal</h3>
+        <p>Total ventas del día (sin bolillo/bolsa): $${(totalDia + totalGastos).toFixed(2)}</p>
+        <p>Total gastos (no bolillo/bolsa): $${totalGastos.toFixed(2)}</p>
+        <hr>
+        <h4>Total neto del día (sin bolillo/bolsa): $${totalDia.toFixed(2)}</h4>
+
+        <h4>💵 Dinero entregado (Corte Principal)</h4>
+        <div>
+            <label>Dinero en billetes: </label>
+            <input type="number" id="billetesPrincipal" value="0" step="0.01">
+            <label>Dinero en monedas: </label>
+            <input type="number" id="monedasPrincipal" value="0" step="0.01">
+        </div>
+        <p id="totalEntregadoPrincipal">Total entregado: $0.00</p>
+        <p id="diferenciaPrincipal">Diferencia: $0.00</p>
+                <button id="btnFinalizarCorte" style="margin-top: 10px;">Finalizar Corte</button>
+
+
+    `;
+
+            // 🔹 Escuchar cambios en los inputs del corte principal
+            const billetesPrincipal = document.getElementById("billetesPrincipal");
+            const monedasPrincipal = document.getElementById("monedasPrincipal");
+            const totalEntregadoPrincipal = document.getElementById("totalEntregadoPrincipal");
+            const diferenciaPrincipal = document.getElementById("diferenciaPrincipal");
+
+            function actualizarCortePrincipal() {
+                const entregado = (parseFloat(billetesPrincipal.value) || 0) + (parseFloat(monedasPrincipal.value) || 0);
+                const diferencia = entregado - totalDia;
+                totalEntregadoPrincipal.textContent = `Total entregado: $${entregado.toFixed(2)}`;
+                diferenciaPrincipal.textContent = `Diferencia: ${diferencia >= 0 ? '+' : ''}$${diferencia.toFixed(2)}`;
+                diferenciaPrincipal.style.color = diferencia >= 0 ? "green" : "red";
+            }
+
+            billetesPrincipal.addEventListener("input", actualizarCortePrincipal);
+            monedasPrincipal.addEventListener("input", actualizarCortePrincipal);
+
+            // 🔹 Mostrar tabla Bolillo/Bolsa
+            const tbody = document.querySelector("#tabla-bolillo-bolsa tbody");
+            tbody.innerHTML = `
+        <tr>
+            <td>-</td>
+            <td>Bolillo</td>
+            <td>${bolilloCantidad}</td>
+            <td>$${totalBolillo.toFixed(2)}</td>
+        </tr>
+        <tr>
+            <td>-</td>
+            <td>Bolsa</td>
+            <td>${bolsaCantidad}</td>
+            <td>$${totalBolsa.toFixed(2)}</td>
+        </tr>
+        <tr>
+            <th colspan="2">Total general Bolillo + Bolsa</th>
+            <th>${bolilloCantidad + bolsaCantidad}</th>
+            <th>$${totalGeneralBolilloBolsa.toFixed(2)}</th>
+        </tr>
+        <tr>
+            <th colspan="3">Total gastos Bolillo/Bolsa (piedra)</th>
+            <th>-$${totalGastosBolilloBolsa.toFixed(2)}</th>
+        </tr>
+        <tr>
+            <th colspan="3">Total neto Bolillo/Bolsa</th>
+            <th>$${totalNetoBolilloBolsa.toFixed(2)}</th>
+        </tr>
+    `;
+
+            document.getElementById("corte-bolillo").style.display = "block";
+
+
+            document.getElementById("btnFinalizarCorte").addEventListener("click", async () => {
+                // 🧾 Capturamos todos los valores actuales del corte
+                const totalVentaPrincipal = totalDia + totalGastos;
+                const totalGastosPrincipal = totalGastos;
+                const totalNetoPrincipal = totalDia;
+
+                const totalBolilloEnv = totalBolillo;
+                const totalBolsaEnv = totalBolsa;
+                const totalGastosBolilloBolsaEnv = totalGastosBolilloBolsa;
+                const totalNetoBolilloBolsaEnv = totalNetoBolilloBolsa;
+
+                const entregadoPrincipal =
+                    (parseFloat(document.getElementById("billetesPrincipal").value) || 0) +
+                    (parseFloat(document.getElementById("monedasPrincipal").value) || 0);
+
+                const diferenciaPrincipal = entregadoPrincipal - totalDia;
+
+                const totalFinalDelDia = totalDia + totalNetoBolilloBolsa;
+
+                // Enviamos los datos
+                const datosCorte = {
+                    fecha: new Date(),
+                    totalVentaPrincipal,
+                    totalGastosPrincipal,
+                    totalNetoPrincipal,
+                    entregadoPrincipal,
+                    diferenciaPrincipal,
+                    gastos: gastosDia,
+                    totalFinalDelDia,
+                    totalBolillo: totalBolilloEnv,
+                    totalBolsa: totalBolsaEnv,
+                    totalGastosBolilloBolsa: totalGastosBolilloBolsaEnv,
+                    totalNetoBolilloBolsa: totalNetoBolilloBolsaEnv
+                };
+
+                try {
+                    const res = await fetch("http://localhost:3000/cortes", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(datosCorte)
+                    });
+
+                    if (!res.ok) throw new Error("Error al guardar el corte");
+
+                    alert("✅ Corte del día guardado correctamente");
+                } catch (error) {
+                    console.error(error);
+                    alert("❌ Error al guardar el corte del día");
+                }
+            });
+
+        });
+
+
+    </script>
+
+
+</body>
+
+</html>

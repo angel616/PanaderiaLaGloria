@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario de Panes</title>
+    <style>
+        body {
+            background-color: #fff6ea;
+            font-family: "Poppins", sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        header {
+            background-color: #f4a261;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            width: 100%;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            font-size: 1.6em;
+            font-weight: bold;
+        }
+
+        .container {
+            margin-top: 30px;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            width: 90%;
+            max-width: 800px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #b85c00;
+            margin-bottom: 15px;
+        }
+
+        form {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        form input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+
+        form button {
+            background-color: #2a9d8f;
+            color: white;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        form button:hover {
+            background-color: #21867a;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4a261;
+            color: white;
+            padding: 10px;
+        }
+
+        td {
+            border-bottom: 1px solid #eee;
+            padding: 8px;
+        }
+
+        .btn-edit {
+            background-color: #f4c542;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background-color: #e63946;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-edit:hover {
+            background-color: #d4ad2c;
+        }
+
+        .btn-delete:hover {
+            background-color: #c5303b;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>📦 Inventario de Panes</header>
+
+    <div class="container">
+        <h2>Agregar o Modificar Pan</h2>
+
+        <form id="formInventario">
+            <input type="text" id="nombre" placeholder="Nombre del pan" required>
+            <input type="number" id="cantidad" placeholder="Cantidad" required>
+            <input type="number" id="precio" placeholder="Precio $" step="0.01" required>
+            <input type="text" id="categoria" placeholder="Categoría (opcional)">
+            <button type="submit">Agregar / Actualizar</button>
+        </form>
+
+        <h2>Lista de Panes</h2>
+        <table id="tablaInventario">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Categoría</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const API_URL = "http://localhost:3000/inventario";
+        let inventario = [];
+        const tabla = document.querySelector("#tablaInventario tbody");
+        const form = document.getElementById("formInventario");
+
+        // 🔹 Obtener panes desde MongoDB
+        async function obtenerInventario() {
+            try {
+                const res = await fetch(API_URL);
+                inventario = await res.json();
+                renderInventario();
+            } catch (error) {
+                console.error("Error al obtener inventario:", error);
+            }
+        }
+
+        // 🔹 Mostrar panes en la tabla
+        function renderInventario() {
+            tabla.innerHTML = "";
+            inventario.forEach(pan => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+          <td>${pan.nombre}</td>
+          <td>${pan.cantidad}</td>
+          <td>$${pan.precio.toFixed(2)}</td>
+          <td>${pan.categoria || "pan"}</td>
+          <td>
+            <button class="btn-edit" onclick="editarPan('${pan._id}')">Editar</button>
+            <button class="btn-delete" onclick="eliminarPan('${pan._id}')">Eliminar</button>
+          </td>
+        `;
+                tabla.appendChild(tr);
+            });
+        }
+
+        // 🔹 Agregar o actualizar pan
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById("nombre").value.trim();
+            const cantidad = parseInt(document.getElementById("cantidad").value);
+            const precio = parseFloat(document.getElementById("precio").value);
+            const categoria = document.getElementById("categoria").value.trim();
+
+            if (!nombre || isNaN(cantidad) || isNaN(precio)) {
+                alert("Completa todos los campos correctamente");
+                return;
+            }
+
+            const existente = inventario.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+            const metodo = existente ? "PUT" : "POST";
+            const url = existente ? `${API_URL}/${existente._id}` : API_URL;
+
+            await fetch(url, {
+                method: metodo,
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ nombre, cantidad, precio, categoria })
+            });
+
+            form.reset();
+            obtenerInventario();
+        });
+
+        // 🔹 Cargar datos al editar
+        function editarPan(id) {
+            const pan = inventario.find(p => p._id === id);
+            if (pan) {
+                document.getElementById("nombre").value = pan.nombre;
+                document.getElementById("cantidad").value = pan.cantidad;
+                document.getElementById("precio").value = pan.precio;
+                document.getElementById("categoria").value = pan.categoria || "";
+            }
+        }
+
+        // 🔹 Eliminar pan
+        async function eliminarPan(id) {
+            if (confirm("¿Seguro que quieres eliminar este pan?")) {
+                await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+                obtenerInventario();
+            }
+        }
+
+        obtenerInventario();
+    </script>
+</body>
+
+</html>

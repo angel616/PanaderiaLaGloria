@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Principal - Panadería La Gloria</title>
+    <style>
+        body {
+            font-family: "Poppins", sans-serif;
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        a {
+            text-decoration: none;
+            color: #fff;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            color: #6b2d1a;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2em;
+            color: #333;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 250px;
+        }
+
+        .menu button {
+            background-color: #6b2d1a;
+            color: #fff;
+            border: none;
+            padding: 15px;
+            font-size: 1.2em;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .menu button:hover {
+            background-color: #a0522d;
+            transform: scale(1.05);
+        }
+
+        footer {
+            position: absolute;
+            bottom: 15px;
+            font-size: 0.9em;
+            color: #333;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Panadería La Gloria</h1>
+        <p>Selecciona una opción</p>
+    </header>
+
+    <section class="menu">
+        <button><a href="registrarVenta.html">🧾 Registrar Venta</a></button>
+        <button><a href="./public/ventarDia.html">📅 Ver Ventas del Día y corte</a></button>
+        <button><a href="./public/inventario.html">Inventario</a></button>
+    </section>
+
+    <footer>
+        © 2025 Panadería La Gloria
+    </footer>
+</body>
+
+</html>

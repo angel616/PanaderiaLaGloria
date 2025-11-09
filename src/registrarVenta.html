@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú de Panadería</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background-color: #fff7ec;
+            color: #4a2c00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fff7ec;
+            color: #4a2c00;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+        }
+
+        table {
+            width: 90%;
+            max-width: 800px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f4a261;
+            color: white;
+        }
+
+        input[type="number"] {
+            width: 80px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        button {
+            padding: 8px 12px;
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #21867a;
+        }
+
+        .selectMetodo {
+            padding: 6px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        header {
+            background-color: #f4a261;
+            color: white;
+            text-align: center;
+            padding: 20px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-top {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+        }
+
+        .btn-regresar {
+            display: inline-block;
+            background: #f5b400;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        header h1 {
+            margin-top: 30px;
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+
+        #precios {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px;
+        }
+
+        .precio-btn {
+            background-color: #e76f51;
+            color: white;
+            padding: 10px 18px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .precio-btn:hover {
+            background-color: #d85a3a;
+        }
+
+        #menu {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            padding: 20px;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        .pan {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            text-align: center;
+            padding: 15px;
+        }
+
+        .pan img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .pan h3 {
+            margin: 10px 0 5px;
+            font-size: 1rem;
+        }
+
+        .pan p {
+            font-weight: bold;
+            color: #e76f51;
+            margin-bottom: 8px;
+        }
+
+        .add-btn {
+            background-color: #2a9d8f;
+            color: white;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: background 0.3s;
+        }
+
+        .add-btn:hover {
+            background-color: #21867a;
+        }
+
+        input[type="number"] {
+            width: 60px;
+            padding: 4px;
+            text-align: center;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 6px;
+        }
+
+        #carrito {
+            width: 90%;
+            max-width: 1000px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+            margin: 20px 0 80px;
+            padding: 20px;
+        }
+
+        #carrito h2 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #tabla-carrito {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        #tabla-carrito th,
+        #tabla-carrito td {
+            border-bottom: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        #footer-venta {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, #fffdf5, #fff4e0);
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.15);
+            padding: 10px 15px;
+            border-top: 3px solid #f5b400;
+            z-index: 999;
+        }
+
+        #total {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        #venta-final h2 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            color: #c47f00;
+            text-align: center;
+        }
+
+        .venta-inputs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .campo {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 150px;
+        }
+
+        .campo label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .campo input,
+        .campo select {
+            padding: 6px 8px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1em;
+            width: 100%;
+        }
+
+        .venta-botones {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        #venta-final button {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        #btnCalcularCambio {
+            background: #f8c93e;
+            color: #fff;
+        }
+
+        #btnCalcularCambio:hover {
+            background: #e0b400;
+        }
+
+        #btnRegistrarVenta {
+            background: #4caf50;
+            color: white;
+        }
+
+        #btnRegistrarVenta:hover {
+            background: #3a943e;
+        }
+
+        body {
+            padding-bottom: 240px;
+            /* evita que el footer tape contenido */
+        }
+
+        .img-wrapper {
+            width: 100%;
+            height: 120px;
+            /* misma altura que tus imágenes */
+            border-radius: 12px 12px 0 0;
+            background-color: #f6f6f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .no-foto {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #888;
+            font-size: 0.9rem;
+            background-color: #f6f6f6;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="header-top">
+            <a href="./index.html" class="btn-regresar">← Menú Principal</a>
+        </div>
+
+        <h1>Panadería La Gloria</h1>
+        <p>Selecciona un precio y agrega panes a tu cuenta</p>
+    </header>
+
+    <div id="precios"></div>
+    <main id="menu"></main>
+
+    <section id="carrito">
+        <h2>Cuenta</h2>
+        <table id="tabla-carrito">
+            <thead>
+                <tr>
+                    <th>Pan</th>
+                    <th>Cantidad</th>
+                    <th>Precio</th>
+                    <th>Subtotal</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+        <div id="total">Total: $0.00</div>
+
+    </section>
+
+
+    <footer id="footer-venta">
+
+        <section id="venta-final">
+            <h2>💰 Finalizar Venta</h2>
+
+            <div class="venta-inputs">
+                <div class="campo">
+                    <label for="pagoCliente">Pago del cliente:</label>
+                    <input type="number" id="pagoCliente" min="0" step="0.01" placeholder="$0.00">
+                </div>
+
+                <div class="campo">
+                    <label for="cambio">Cambio:</label>
+                    <input type="number" id="cambio" readonly placeholder="$0.00">
+                </div>
+
+                <div class="campo">
+                    <label for="metodoPago">Método de pago:</label>
+                    <select id="metodoPago">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                        <option value="transferencia">Transferencia</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="venta-botones">
+                <button id="btnCalcularCambio">💵 Calcular Cambio</button>
+                <button id="btnRegistrarVenta" class="registrar">✅ Registrar Venta</button>
+            </div>
+        </section>
+    </footer>
+
+    <script>
+        // Datos de panes
+        const panes = {
+            "1": ["Bolsa"],
+            "2.5": ["Bolillo"],
+            "9": ["Concha", "Cuerno", "Trebol", "Moño"],
+            "10": ["Dona", "Dona-Berlinesa", "Piedra", "Taco", "Galleta-Carita", "Rebanada-de-Mantequilla", "Bisquet"],
+            "11": ["Oreja"],
+            "12": ["Oruga", "Bigote", "Hot-Dog", "Barquillo", "Canasta-Zarzamora", "Canasta-de-Higo", "Cuerno-z/q", "Paloma", "Beso", "Polvorón", "Espejo", "Borrego", "Colombiana", "Ojo-Buey", "Rebanada-de-Chocolate", "Pinguino"],
+            "13": ["Dedo-de-Novia", "Galleta-de-Semilla", "Multi", "Ratón"],
+            "14": ["Chino", "Cacahuate"],
+            "15": ["Multi-con-Pasas"],
+            "16": ["Pays", "Deliciosas"],
+            "17": ["Muffin"],
+            "18": ["Pan-de-Muerto"],
+            "20": ["Pay-Decorado", "Cupcake", "Almohada"],
+            "25": ["Milhojas", "Rol-de-Canela"]
+        };
+
+        let total = 0;
+        const carrito = [];
+
+        // Crear botones de precios
+        const preciosDiv = document.getElementById("precios");
+        Object.keys(panes).forEach(precio => {
+            const btn = document.createElement("button");
+            btn.classList.add("precio-btn");
+            btn.textContent = `$${precio}`;
+            btn.onclick = () => mostrarPanes(precio);
+            preciosDiv.appendChild(btn);
+        });
+
+        let inventarioPanes = [];
+
+        async function cargarInventario() {
+            try {
+                const res = await fetch("http://localhost:3000/inventario");
+                inventarioPanes = await res.json();
+            } catch (err) {
+                console.warn("No se pudo cargar el inventario, mostrando menú sin stock...");
+                inventarioPanes = [];
+            }
+        }
+
+        // Mostrar panes según precio
+        async function mostrarPanes(precio) {
+            const menu = document.getElementById("menu");
+            menu.innerHTML = "";
+            await cargarInventario(); // asegúrate de tener esta función lista
+
+            panes[precio].forEach(nombre => {
+                const div = document.createElement("div");
+                div.classList.add("pan");
+
+                const fileName = nombre
+                    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+                    .replace(/\s+/g, "_")
+                    .toLowerCase();
+                const imagePath = `imgs/${fileName}.jpg`;
+                const isBolillo = nombre.toLowerCase() === "bolillo";
+
+                // Contenedor de imagen
+                const imgWrapper = document.createElement("div");
+                imgWrapper.className = "img-wrapper";
+
+                const img = document.createElement("img");
+                img.src = imagePath;
+                img.alt = nombre;
+
+                const noFoto = document.createElement("div");
+                noFoto.className = "no-foto";
+                noFoto.textContent = "Sin foto";
+                noFoto.style.display = "none";
+
+                img.onerror = () => {
+                    img.style.display = "none";
+                    noFoto.style.display = "flex";
+                };
+                img.onload = () => {
+                    img.style.display = "block";
+                    noFoto.style.display = "none";
+                };
+
+                imgWrapper.appendChild(img);
+                imgWrapper.appendChild(noFoto);
+
+                const h3 = document.createElement("h3");
+                h3.textContent = nombre;
+
+                const pPrecio = document.createElement("p");
+                pPrecio.textContent = `$${precio}`;
+
+                const panInventario = inventarioPanes.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
+                const stock = panInventario ? panInventario.cantidad : "—";
+                const stockP = document.createElement("p");
+                stockP.style.color = "gray";
+                stockP.textContent = `Disponibles: ${stock}`;
+
+                const btn = document.createElement("button");
+                btn.className = "add-btn";
+                btn.textContent = "Agregar a cuenta";
+                btn.onclick = () => agregarCuenta(nombre, precio);
+
+                if (isBolillo) {
+                    const input = document.createElement("input");
+                    input.type = "number";
+                    input.id = "cantidad-bolillo";
+                    input.min = "1";
+                    input.value = "1";
+                    div.append(imgWrapper, h3, pPrecio, stockP, input, btn);
+                } else {
+                    div.append(imgWrapper, h3, pPrecio, stockP, btn);
+                }
+
+                menu.appendChild(div);
+            });
+        }
+
+        // Agregar pan al carrito
+        function agregarCuenta(nombre, precio) {
+            let cantidad = 1;
+
+            // Si es bolillo, tomar la cantidad del input
+            if (nombre.toLowerCase() === "bolillo") {
+                const input = document.getElementById("cantidad-bolillo");
+                cantidad = parseInt(input.value) || 1;
+            }
+
+            const subtotal = cantidad * parseFloat(precio);
+
+            carrito.push({ nombre, cantidad, precio, subtotal });
+            actualizarCarrito();
+        }
+
+        // Actualizar tabla del carrito y total
+        function actualizarCarrito() {
+            const tbody = document.querySelector("#tabla-carrito tbody");
+            tbody.innerHTML = "";
+
+            total = 0;
+            carrito.forEach(item => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+      <td>${item.nombre}</td>
+      <td>${item.cantidad}</td>
+      <td>$${item.precio}</td>
+      <td>$${item.subtotal.toFixed(2)}</td>
+    `;
+                tbody.appendChild(tr);
+                total += item.subtotal;
+            });
+
+            document.getElementById("total").textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        // Calcular cambio
+        document.getElementById("btnCalcularCambio").addEventListener("click", () => {
+            const pago = parseFloat(document.getElementById("pagoCliente").value) || 0;
+            const cambio = pago - total;
+            document.getElementById("cambio").value = cambio.toFixed(2);
+        });
+
+        // Registrar venta
+        document.getElementById("btnRegistrarVenta").addEventListener("click", async () => {
+            const pago = parseFloat(document.getElementById("pagoCliente").value) || 0;
+            const metodoPago = document.getElementById("metodoPago").value;
+            const cambio = pago - total;
+
+            if (carrito.length === 0) {
+                alert("El carrito está vacío");
+                return;
+            }
+            if (pago < total) {
+                alert("El pago es menor al total");
+                return;
+            }
+
+            const venta = {
+                productos: carrito.map(item => ({
+                    nombre: item.nombre,
+                    cantidad: item.cantidad,
+                    precioUnitario: item.precio,
+                    subtotal: item.subtotal
+                })),
+                total,
+                pago,
+                cambio,
+                metodoPago
+            };
+
+            try {
+                const response = await fetch("http://localhost:3000/ventas", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(venta)
+                });
+                const data = await response.json();
+                alert(data.message);
+
+                carrito.length = 0;
+                actualizarCarrito();
+                document.getElementById("pagoCliente").value = "";
+                document.getElementById("cambio").value = "";
+            } catch (error) {
+                console.error("Error registrando venta:", error);
+                alert("Error al registrar la venta");
+            }
+        });
+
+    </script>
+</body>
+
+</html>
