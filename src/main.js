@@ -25,6 +25,7 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     next();
 });
+app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
@@ -123,10 +124,6 @@ app.post("/inventario/update-stock", async (req, res) => {
         { $inc: { cantidad: -cantidadVendida }, $set: { fechaActualizacion: new Date() } }
     );
     res.json({ mensaje: "Inventario actualizado tras venta" });
-});
-
-app.get("/", (req, res) => {
-  res.send("🚀 Servidor Panadería La Gloria funcionando correctamente");
 });
 
 app.listen(PORT, () => {
