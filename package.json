@@ -2,7 +2,7 @@
   "type": "module",
   "name": "panaderiasistema",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "node main.js"
   },
