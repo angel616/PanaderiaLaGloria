@@ -209,9 +209,7 @@
 
             console.log("🔹 Buscando entre:", inicioStr, "y", finStr);
 
-            const response = await fetch(
-                `http://localhost:3000/ventas?inicio=${inicioStr}&fin=${finStr}`
-            );
+            const response = await fetch(`https://panaderialagloria.onrender.com/ventas?inicio=${inicioStr}&fin=${finStr}`);
 
 
             const ventas = await response.json();
@@ -431,7 +429,7 @@
                 };
 
                 try {
-                    const res = await fetch("http://localhost:3000/cortes", {
+                    const res = await fetch("http://panaderialagloria.onrender.com/cortes", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
                         body: JSON.stringify(datosCorte)
