@@ -6,7 +6,7 @@ import Inventario from "./conexiones/inventario.js";
 
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 conectarDB();
 
@@ -117,6 +117,6 @@ app.post("/inventario/update-stock", async (req, res) => {
 
 
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });
 
