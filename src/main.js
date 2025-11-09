@@ -1,12 +1,17 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { conectarDB } from "./conexiones/db.js";
 import Ventas from "./conexiones/db.js";
 import Corte from "./conexiones/cortes.js";
 import Inventario from "./conexiones/inventario.js";
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Necesario para rutas absolutas
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 conectarDB();
 
@@ -20,6 +25,11 @@ app.use((req, res, next) => {
     res.header("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
     next();
 });
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "index.html"));
+});
+
 
 app.post("/cortes", async (req, res) => {
     try {
