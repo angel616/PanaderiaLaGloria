@@ -115,6 +115,9 @@ app.post("/inventario/update-stock", async (req, res) => {
     res.json({ mensaje: "Inventario actualizado tras venta" });
 });
 
+app.get("/", (req, res) => {
+  res.send("🚀 Servidor Panadería La Gloria funcionando correctamente");
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en puerto ${PORT}`);
