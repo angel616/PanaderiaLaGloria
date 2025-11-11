@@ -1,3 +1,18 @@
+/*
+
+  Archivo: src/main.js
+  Descripción: Sistema de la panadería.
+  Autor: ANGEL CASTILLO
+  Fecha: 2025-10-11
+  Versión: 1.0.0
+    "Original"
+  Cambios: - 2024-06-15: Se agregó CORS para permitir solicitudes desde el frontend.
+  - 2024-06-20: Se mejoró el manejo de fechas en las consultas de ventas.
+  - 2024-06-25: Se optimizó la actualización del inventario tras ventas.
+  - 2024-06-30: Se añadieron mensajes de error más detallados en las respuestas de la API.
+*/
+
+
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -16,25 +31,20 @@ const __dirname = path.dirname(__filename);
 
 conectarDB();
 
-// Middleware para recibir JSON
 app.use(express.json());
 
-// ✅ Habilitar CORS (reemplaza tu bloque manual)
 app.use(cors({ origin: "*" }));
-// O si quieres limitar a tu frontend:
-// app.use(cors({ origin: "https://panaderialagloria.netlify.app" }));
 
 // Servir archivos estáticos
 app.use(express.static(__dirname));
 
-// Página principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
 // ===================== RUTAS ======================
 
-// 🔹 Guardar corte
+
 app.post("/cortes", async (req, res) => {
   try {
     const nuevoCorte = new Corte(req.body);
@@ -46,7 +56,6 @@ app.post("/cortes", async (req, res) => {
   }
 });
 
-// 🔹 Registrar venta
 app.post("/ventas", async (req, res) => {
   try {
     const nuevaVenta = new Ventas(req.body);
@@ -58,7 +67,6 @@ app.post("/ventas", async (req, res) => {
   }
 });
 
-// 🔹 Obtener ventas
 app.get("/ventas", async (req, res) => {
   try {
     const { inicio, fin } = req.query;
@@ -81,13 +89,11 @@ app.get("/ventas", async (req, res) => {
 
 // ================== INVENTARIO ===================
 
-// 🔹 Obtener inventario
 app.get("/inventario", async (req, res) => {
   const panes = await Inventario.find();
   res.json(panes);
 });
 
-// 🔹 Agregar pan
 app.post("/inventario", async (req, res) => {
   const { nombre, cantidad, precio, categoria } = req.body;
   try {
@@ -102,10 +108,29 @@ app.post("/inventario", async (req, res) => {
 // 🔹 Editar pan
 app.put("/inventario/:id", async (req, res) => {
   try {
-    await Inventario.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json({ mensaje: "Inventario actualizado" });
-  } catch (error) {
-    res.status(500).json({ error: "Error al editar pan" });
+    const { cantidad } = req.body;
+    if (typeof cantidad !== "number") {
+      return res.status(400).json({ mensaje: "La cantidad debe ser un número" });
+    }
+
+    // 👇 suma la cantidad actual, sin modificar nombre, precio o categoría
+    const productoActualizado = await Inventario.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { cantidad: cantidad } },
+      { new: true }
+    );
+
+    if (!productoActualizado) {
+      return res.status(404).json({ mensaje: "Producto no encontrado" });
+    }
+
+    res.json({
+      mensaje: `Cantidad sumada correctamente`,
+      productoActualizado,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ mensaje: "Error al actualizar inventario" });
   }
 });
 
