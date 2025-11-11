@@ -148,7 +148,7 @@
     </div>
 
     <script>
-const API_URL = "https://panaderialagloria.onrender.com/inventario";
+        const API_URL = "https://panaderialagloria.onrender.com/inventario";
         let inventario = [];
         const tabla = document.querySelector("#tablaInventario tbody");
         const form = document.getElementById("formInventario");
@@ -186,6 +186,7 @@ const API_URL = "https://panaderialagloria.onrender.com/inventario";
         // 🔹 Agregar o actualizar pan
         form.addEventListener("submit", async (e) => {
             e.preventDefault();
+
             const nombre = document.getElementById("nombre").value.trim();
             const cantidad = parseInt(document.getElementById("cantidad").value);
             const precio = parseFloat(document.getElementById("precio").value);
@@ -197,14 +198,24 @@ const API_URL = "https://panaderialagloria.onrender.com/inventario";
             }
 
             const existente = inventario.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
-            const metodo = existente ? "PUT" : "POST";
-            const url = existente ? `${API_URL}/${existente._id}` : API_URL;
 
-            await fetch(url, {
-                method: metodo,
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ nombre, cantidad, precio, categoria })
-            });
+            if (existente) {
+                // ✅ Aquí solo mandamos la cantidad a sumar
+                await fetch(`${API_URL}/${existente._id}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ cantidad })
+                });
+                alert(`Se sumaron ${cantidad} ${nombre}(s) al inventario`);
+            } else {
+                // Nuevo pan
+                await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ nombre, cantidad, precio, categoria })
+                });
+                alert(`Se agregó ${nombre} al inventario`);
+            }
 
             form.reset();
             obtenerInventario();
